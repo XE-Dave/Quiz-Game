@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Quiz - Dark Theme</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #1a237e, #0d47a1);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            animation: backgroundGlow 6s infinite alternate;
+        }
+
+        @keyframes backgroundGlow {
+            0% { background: linear-gradient(to bottom, #1a237e, #0d47a1); }
+            100% { background: linear-gradient(to bottom, #0d47a1, #1a237e); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #66ccff;
+            text-shadow: 0px 0px 15px #66ccff, 0px 0px 30px #fff;
+            text-transform: uppercase;
+            animation: glowEffect 1.5s infinite alternate;
+        }
+
+        @keyframes glowEffect {
+            0% { text-shadow: 0 0 15px #66ccff, 0 0 30px #fff; }
+            100% { text-shadow: 0 0 30px #66ccff, 0 0 60px #fff; }
+        }
+
+        .quiz-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #bbdefb;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background-color: #1976d2;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .option.correct { background-color: #2e7d32; }
+        .option.incorrect { background-color: #c62828; }
+        .option.selected { pointer-events: none; }
+
+        .progress-bar {
+            height: 8px;
+            width: 100%;
+            background-color: #333;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar div {
+            height: 100%;
+            width: 0%;
+            background-color: #66ccff;
+            transition: width 0.4s ease;
+        }
+
+        .quit-button {
+            background-color: #c62828;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            transition: background-color 0.3s;
+        }
+
+        .quit-button:hover { background-color: #b71c1c; }
+    </style>
+</head>
+<body>
+    <h1>Anime Quiz</h1>
+    <div class="quiz-container">
+        <div class="progress-bar"><div id="progress"></div></div>
+        <div id="question-container"></div>
+    </div>
+    <button class="quit-button" onclick="quitQuiz()">Quit</button>
+    <script>
+        const questions = [
+            { q: "Who is the main protagonist in *Naruto*?", o: ["Naruto Uzumaki", "Sasuke Uchiha", "Sakura Haruno", "Kakashi Hatake"], a: "Naruto Uzumaki" },
+            { q: "Which anime features 'I am going to be king of the pirates!'?", o: ["One Piece", "Bleach", "Attack on Titan", "Naruto"], a: "One Piece" },
+            { q: "Who is the main villain in *Dragon Ball Z*?", o: ["Frieza", "Cell", "Majin Buu", "Goku"], a: "Frieza" },
+            { q: "Which anime revolves around humanity's fight against giants?", o: ["Attack on Titan", "One Punch Man", "My Hero Academia", "Hunter x Hunter"], a: "Attack on Titan" },
+            { q: "What is the quirk of the protagonist in *My Hero Academia*?", o: ["All Might", "One For All", "Bakugo", "Todoroki"], a: "One For All" }
+        ];
+
+        let index = 0, correct = 0;
+
+        function showQuestion() {
+            if (index >= questions.length) return finishQuiz();
+            const q = questions[index];
+            document.getElementById("question-container").innerHTML = `
+                <div class='question'>${q.q}</div>
+                <div class='options'>
+                    ${q.o.map(o => `<div class='option' onclick='checkAnswer(this, "${o}")'>${o}</div>`).join('')}
+                </div>
+            `;
+            document.getElementById("progress").style.width = `${(index / questions.length) * 100}%`;
+        }
+
+        function checkAnswer(element, answer) {
+            const correctAnswer = questions[index].a;
+            document.querySelectorAll('.option').forEach(opt => opt.classList.add('selected'));
+            if (answer === correctAnswer) {
+                element.classList.add('correct');
+                correct++;
+            } else {
+                element.classList.add('incorrect');
+                document.querySelectorAll('.option').forEach(opt => {
+                    if (opt.innerText === correctAnswer) opt.classList.add('correct');
+                });
+            }
+            setTimeout(() => { index++; showQuestion(); }, 1500);
+        }
+
+        function finishQuiz() {
+            alert(`You got ${correct}/${questions.length} correct!`);
+            location.href = "adse_movies_homepage.html";
+        }
+
+        function quitQuiz() {
+            if (confirm("Are you sure you want to quit?")) location.href = "adse_movies_homepage.html";
+        }
+
+        showQuestion();
+    </script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Quiz - Dark Theme</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffafcc, #b4a0ff);
+            background-size: cover;
+            color: #FFF;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            animation: backgroundPulse 6s infinite alternate;
+        }
+
+        @keyframes backgroundPulse {
+            0% { background: linear-gradient(135deg, #ffafcc, #d1c3ff); }
+            100% { background: linear-gradient(135deg, #ffafcc, #b4a0ff); }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 60px;
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0px 0px 15px #ffafcc, 0px 0px 30px #d1c3ff;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            animation: glowEffect 1.5s infinite alternate;
+        }
+
+        /* Glowing text effect */
+        @keyframes glowEffect {
+            0% { text-shadow: 0 0 15px #ffafcc, 0 0 30px #d1c3ff; }
+            100% { text-shadow: 0 0 30px #ffafcc, 0 0 60px #d1c3ff; }
+        }
+
+        .quiz-container, .result-container {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);;
+            padding: 40px;
+            border-radius: 25px;
+            width: 400px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: fadeInUp 0.8s ease-out forwards;
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(-50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #ffafcc;
+            text-align: left;
+            padding: 10px;
+            background: linear-gradient(to right, #6e3d47, #ffafcc);
+            border-radius: 10px;
+            text-shadow: 2px 2px rgba(0, 0, 0, 0.3);
+            animation: slideIn 1s ease forwards;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+            animation: optionSlideIn 0.5s ease-out;
+        }
+
+        @keyframes optionSlideIn {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        .option {
+            background-color: #6e3d47;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s ease;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .option:hover {
+            background-color: #a66e77;
+            transform: translateY(-5px);
+        }
+
+        .option.correct {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        .option.incorrect {
+            background-color: #c62828;
+            color: white;
+        }
+
+        .option.selected {
+            pointer-events: none;
+        }
+
+        .progress-container {
+            margin-bottom: 20px;
+            width: 100%;
+            height: 8px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #d1c3ff;
+            border-radius: 5px;
+            transition: width 0.4s ease;
+        }
+
+        .navigation-buttons button {
+            background-color: #6e3d47;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s ease;
+        }
+
+        .navigation-buttons button:hover {
+            background-color: #a66e77;
+            transform: scale(1.05);
+        }
+
+        .quit-button {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #c62828;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .quit-button:hover {
+            background-color: #b71c1c;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-container, .result-container {
+                width: 90%;
+            }
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            animation: fadeInUp 1s ease-out;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            color: #FFF;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>K-Drama Quiz</h1>
+
+    <div class="quiz-container" id="quiz-container">
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div id="questions-container"></div>
+    </div>
+
+    <a class="quit-button" onclick="quitQuiz()">Quit Quiz</a>
+
+    <footer>
+        <p>Enjoy the thrill of K-Drama, brought to you by ADSE-lokogoma</p>
+    </footer>
+
+    <script>
+        const allQuestions = [
+            { question: "Who is the main protagonist of 'Crash Landing On You'?", options: ['Yoon Se-ri', 'Ri Jeong-hyeok', 'Seo Dan', 'Kim Ju-meok'], answer: 'Ri Jeong-hyeok' },
+            { question: "What is the main theme of 'Vincenzo'?", options: ['Crime and Punishment', 'Love and Betrayal', 'Revenge and Justice', 'Family and Friendship'], answer: 'Revenge and Justice' },
+            { question: "In 'Goblin', who is the Goblin's bride?", options: ['Ji Eun-tak', 'Kim Shin', 'Wang Yeo', 'Sun Duk'], answer: 'Ji Eun-tak' },
+            { question: "What is the primary power of the character 'Lee Gon' in 'The King: Eternal Monarch'?", options: ['Super Strength', 'Time Travel', 'Invisibility', 'Mind Control'], answer: 'Time Travel' },
+            { question: "In 'Itaewon Class', what business does Park Sae-ro-yi start?", options: ['Restaurant', 'Clothing Store', 'Bar', 'Beauty Salon'], answer: 'Restaurant' }
+        ];
+
+        let currentQuestion = 0;
+        let correctAnswers = 0;
+
+        function showQuestion() {
+            const question = allQuestions[currentQuestion];
+            const container = document.getElementById('questions-container');
+            container.innerHTML = `
+                <div class="question">
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, idx) => `
+                            <div class="option" onclick="selectAnswer('${option}', this)">
+                                ${String.fromCharCode(65 + idx)}. ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            updateProgressBar();
+        }
+
+        function selectAnswer(selectedOption, element) {
+            const question = allQuestions[currentQuestion];
+            const options = document.querySelectorAll('.option');
+
+            options.forEach(opt => opt.classList.add('selected'));
+
+            if (selectedOption === question.answer) {
+                element.classList.add('correct');
+                correctAnswers++;
+            } else {
+                element.classList.add('incorrect');
+                options.forEach(opt => {
+                    if (opt.innerText.includes(question.answer)) {
+                        opt.classList.add('correct');
+                    }
+                });
+            }
+            setTimeout(() => navigate(1), 2000); // Proceed to the next question after 2 seconds
+        }
+
+        function navigate(direction) {
+            currentQuestion += direction;
+            if (currentQuestion < allQuestions.length) {
+                showQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progress-bar');
+            const progressPercentage = ((currentQuestion + 1) / allQuestions.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+        }
+
+        function finishQuiz() {
+            if (correctAnswers === allQuestions.length) {
+                alert(`marvellous,you are exceptional.congratulation! You scored ${correctAnswers} out of ${allQuestions.length}! 🎉`);
+            } else {
+                alert(`Quiz complete! You answered ${correctAnswers} out of ${allQuestions.length} correctly. try harder next time.`);
+            }
+            location.href = "adse_movies_homepage.html";
+        }
+
+        function quitQuiz() {
+            if (confirm("Are you sure you want to quit the quiz?")) {
+                location.href = "adse_movies_homepage.html";
+            }
+        }
+
+        showQuestion();
+    </script>
+
+</body>
+</html>
+
